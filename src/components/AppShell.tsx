@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
+import { AgentWidget } from "./AgentWidget";
 
 const nav = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
