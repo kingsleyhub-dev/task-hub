@@ -178,6 +178,10 @@ export type Database = {
           id: string
           language: string | null
           name: string
+          review_notes: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          submitted_at: string
         }
         Insert: {
           approval_status?: Database["public"]["Enums"]["script_approval"]
@@ -189,6 +193,10 @@ export type Database = {
           id?: string
           language?: string | null
           name: string
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          submitted_at?: string
         }
         Update: {
           approval_status?: Database["public"]["Enums"]["script_approval"]
@@ -200,6 +208,10 @@ export type Database = {
           id?: string
           language?: string | null
           name?: string
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          submitted_at?: string
         }
         Relationships: [
           {
