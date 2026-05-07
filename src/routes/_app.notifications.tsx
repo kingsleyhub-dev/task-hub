@@ -1,37 +1,52 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader } from "@/components/PageHeader";
 import { Card } from "@/components/ui/card";
-import { notifications } from "@/lib/sample-data";
-import { Bell, CheckCircle2, AlertTriangle, Wrench, Code2, User, Megaphone, Clock } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useNotifications } from "@/hooks/useData";
+import { Bell, CheckCircle2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
-const iconMap: Record<string, any> = {
-  task: CheckCircle2, deadline: Clock, review: Code2, tool: Wrench,
-  alert: AlertTriangle, user: User, system: Megaphone,
-};
+export const Route = createFileRoute("/_app/notifications")({ component: NotificationsPage });
 
-export const Route = createFileRoute("/_app/notifications")({ component: NotifPage });
+function NotificationsPage() {
+  const { data, loading } = useNotifications();
 
-function NotifPage() {
+  async function markRead(id: string) {
+    const { error } = await supabase.from("notifications").update({ read: true }).eq("id", id);
+    if (error) toast.error(error.message);
+  }
+
   return (
     <div>
-      <PageHeader title="Notifications" subtitle="Real-time alerts across tasks, tools, scripts and security events." />
-      <Card className="glass divide-y divide-border/60">
-        {notifications.map(n => {
-          const Icon = iconMap[n.type] ?? Bell;
-          return (
-            <div key={n.id} className="flex items-start gap-4 p-4 hover:bg-muted/30 transition">
-              <div className="size-10 rounded-lg bg-cyber-cyan/15 flex items-center justify-center shrink-0">
-                <Icon className="size-5 text-cyber-cyan" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="font-medium">{n.title}</div>
+      <PageHeader title="Notifications" subtitle="Alerts, task updates, and system messages." />
+      <div className="space-y-2">
+        {loading && <Card className="glass p-6 text-center text-muted-foreground">Loading…</Card>}
+        {!loading && data.length === 0 && (
+          <Card className="glass p-10 text-center">
+            <Bell className="size-8 text-cyber-cyan mx-auto mb-3" />
+            <div className="font-semibold">All caught up</div>
+            <div className="text-sm text-muted-foreground mt-1">You have no notifications.</div>
+          </Card>
+        )}
+        {data.map(n => (
+          <Card key={n.id} className={`glass p-4 flex justify-between items-start gap-4 ${n.read ? "opacity-60" : ""}`}>
+            <div className="flex gap-3 min-w-0">
+              <Bell className="size-4 text-cyber-cyan mt-1 shrink-0" />
+              <div className="min-w-0">
+                <div className="font-medium text-sm">{n.title}</div>
                 <div className="text-sm text-muted-foreground">{n.body}</div>
+                <div className="text-[11px] text-muted-foreground font-mono mt-1">{new Date(n.created_at).toLocaleString()}</div>
               </div>
-              <div className="text-xs text-muted-foreground font-mono shrink-0">{n.time}</div>
             </div>
-          );
-        })}
-      </Card>
+            {!n.read && (
+              <Button size="sm" variant="outline" onClick={() => markRead(n.id)}>
+                <CheckCircle2 className="size-3.5 mr-1" /> Mark read
+              </Button>
+            )}
+          </Card>
+        ))}
+      </div>
     </div>
   );
 }

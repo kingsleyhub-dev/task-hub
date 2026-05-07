@@ -1,4 +1,4 @@
-import { Link, Outlet, useLocation } from "@tanstack/react-router";
+import { Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import { Logo } from "./Logo";
 import {
   LayoutDashboard, Users, ListChecks, Wrench, Code2, GraduationCap,
@@ -7,6 +7,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
 
 const nav = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -24,6 +25,10 @@ const nav = [
 
 export function AppShell() {
   const location = useLocation();
+  const nav2 = useNavigate();
+  const { profile, roles, signOut } = useAuth();
+  const initials = (profile?.name ?? "OP").split(" ").map(p=>p[0]).join("").slice(0,2).toUpperCase();
+  const roleLabel = roles.includes("super_admin") ? "Super Admin" : roles.includes("admin") ? "Admin" : roles.includes("operator") ? "Operator" : "Viewer";
   return (
     <div className="min-h-screen flex">
       {/* Sidebar */}
@@ -86,14 +91,16 @@ export function AppShell() {
             </Link>
             <div className="flex items-center gap-2">
               <div className="size-8 rounded-full bg-gradient-to-br from-cyber-cyan to-cyber-purple flex items-center justify-center text-xs font-bold text-primary-foreground">
-                AO
+                {initials}
               </div>
               <div className="hidden lg:block text-xs leading-tight">
-                <div className="font-semibold">Adaeze Okafor</div>
-                <div className="text-muted-foreground">KH-0001 · Super Admin</div>
+                <div className="font-semibold">{profile?.name ?? "Operator"}</div>
+                <div className="text-muted-foreground">{profile?.work_id ?? "—"} · {roleLabel}</div>
               </div>
             </div>
-            <Link to="/"><Button variant="ghost" size="icon"><LogOut className="size-4" /></Button></Link>
+            <Button variant="ghost" size="icon" onClick={async () => { await signOut(); nav2({ to: "/" }); }}>
+              <LogOut className="size-4" />
+            </Button>
           </div>
         </header>
 

@@ -7,7 +7,8 @@ import { StatusBadge } from "@/components/StatusBadges";
 import {
   Users, ListChecks, ShieldAlert, CheckCircle2, Wrench, Code2, Bell, Activity, KeyRound, TrendingUp,
 } from "lucide-react";
-import { tasks, users, tools, scripts, taskTrend, productivity, auditLogs } from "@/lib/sample-data";
+import { taskTrend, productivity } from "@/lib/sample-data";
+import { useTasks, useProfiles, useTools, useScripts, useAuditLogs } from "@/hooks/useData";
 import {
   AreaChart, Area, BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid,
 } from "recharts";
@@ -34,6 +35,12 @@ function Stat({ icon: Icon, label, value, accent, sub }: any) {
 }
 
 function Dashboard() {
+  const { data: tasks } = useTasks();
+  const { data: users } = useProfiles();
+  const { data: tools } = useTools();
+  const { data: scripts } = useScripts();
+  const { data: auditLogs } = useAuditLogs(20);
+
   const completed = tasks.filter(t => t.status === "Completed").length;
   const pending = tasks.filter(t => t.status !== "Completed").length;
   const high = tasks.filter(t => t.priority === "High" || t.priority === "Critical").length;
@@ -51,7 +58,7 @@ function Dashboard() {
       />
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-        <Stat icon={Users} label="Total Users" value={users.length} accent="oklch(0.78 0.17 200)" sub="+2 this month" />
+        <Stat icon={Users} label="Total Users" value={users.length} accent="oklch(0.78 0.17 200)" />
         <Stat icon={KeyRound} label="Active Work IDs" value={activeWorkIds} accent="oklch(0.65 0.24 295)" />
         <Stat icon={ListChecks} label="Pending Tasks" value={pending} accent="oklch(0.82 0.14 85)" />
         <Stat icon={CheckCircle2} label="Completed" value={completed} accent="oklch(0.78 0.2 145)" />
@@ -62,7 +69,7 @@ function Dashboard() {
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-3 mt-3">
         <Stat icon={Code2} label="Scripts Available" value={scripts.length} accent="oklch(0.78 0.17 200)" />
         <Stat icon={Bell} label="Security Alerts (24h)" value={3} accent="oklch(0.65 0.24 22)" sub="2 contained" />
-        <Stat icon={Activity} label="Recent Activity (24h)" value={auditLogs.length} accent="oklch(0.65 0.24 295)" />
+        <Stat icon={Activity} label="Recent Activity" value={auditLogs.length} accent="oklch(0.65 0.24 295)" />
       </div>
 
       <div className="grid lg:grid-cols-3 gap-4 mt-6">
@@ -117,12 +124,15 @@ function Dashboard() {
             <Link to="/tasks" className="text-xs text-cyber-cyan hover:underline">View all</Link>
           </div>
           <div className="space-y-3">
+            {tasks.length === 0 && <div className="text-sm text-muted-foreground text-center py-8">No tasks yet. Create one from the Tasks page.</div>}
             {tasks.slice(0, 5).map(t => (
               <div key={t.id} className="p-3 rounded-lg border border-border/60 hover:border-cyber-cyan/40 transition">
                 <div className="flex justify-between gap-3">
                   <div className="min-w-0">
                     <div className="text-sm font-medium truncate">{t.title}</div>
-                    <div className="text-xs text-muted-foreground mt-0.5 font-mono">{t.id} · {t.assignee} · {t.workId}</div>
+                    <div className="text-xs text-muted-foreground mt-0.5 font-mono">
+                      {t.code ?? t.id.slice(0,8)} · {t.assignee?.name ?? "Unassigned"} {t.assignee?.work_id ? `· ${t.assignee.work_id}` : ""}
+                    </div>
                   </div>
                   <div className="flex flex-col items-end gap-1 shrink-0">
                     <StatusBadge value={t.priority} />
@@ -141,12 +151,13 @@ function Dashboard() {
             <Link to="/audit" className="text-xs text-cyber-cyan hover:underline">Audit logs</Link>
           </div>
           <div className="space-y-2 max-h-[360px] overflow-y-auto pr-1">
-            {auditLogs.slice(0, 8).map((l, i) => (
-              <div key={i} className="flex items-start gap-3 p-2 rounded-lg hover:bg-muted/40 transition">
+            {auditLogs.length === 0 && <div className="text-sm text-muted-foreground text-center py-8">No activity yet.</div>}
+            {auditLogs.slice(0, 8).map((l) => (
+              <div key={l.id} className="flex items-start gap-3 p-2 rounded-lg hover:bg-muted/40 transition">
                 <div className="size-2 rounded-full bg-cyber-cyan mt-2 shrink-0" />
                 <div className="min-w-0 flex-1">
-                  <div className="text-sm">{l.event} <span className="text-muted-foreground">— {l.detail}</span></div>
-                  <div className="text-[11px] text-muted-foreground font-mono">{l.ts} · {l.user}</div>
+                  <div className="text-sm">{l.event} {l.detail && <span className="text-muted-foreground">— {l.detail}</span>}</div>
+                  <div className="text-[11px] text-muted-foreground font-mono">{new Date(l.created_at).toLocaleString()} · {l.user?.name ?? "system"}</div>
                 </div>
                 <StatusBadge value={l.severity} />
               </div>
