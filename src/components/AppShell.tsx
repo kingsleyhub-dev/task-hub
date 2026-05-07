@@ -29,6 +29,7 @@ export function AppShell() {
   const { profile, roles, signOut } = useAuth();
   const initials = (profile?.name ?? "OP").split(" ").map(p=>p[0]).join("").slice(0,2).toUpperCase();
   const roleLabel = roles.includes("super_admin") ? "Super Admin" : roles.includes("admin") ? "Admin" : roles.includes("operator") ? "Operator" : "Viewer";
+  return (
     <div className="min-h-screen flex">
       {/* Sidebar */}
       <aside className="hidden md:flex w-64 shrink-0 flex-col bg-sidebar border-r border-sidebar-border">
