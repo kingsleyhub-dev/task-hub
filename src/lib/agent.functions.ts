@@ -87,8 +87,8 @@ export const chatWithAgent = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: { messages: Msg[] }) => data)
   .handler(async ({ data, context }) => {
-    const apiKey = process.env.LOVABLE_API_KEY;
-    if (!apiKey) throw new Error("LOVABLE_API_KEY is not configured");
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) throw new Error("GEMINI_API_KEY is not configured");
 
     const messages: Msg[] = [{ role: "system", content: SYSTEM }, ...data.messages];
 
@@ -96,19 +96,18 @@ export const chatWithAgent = createServerFn({ method: "POST" })
 
     // up to 3 tool round-trips
     for (let i = 0; i < 4; i++) {
-      const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      const resp = await fetch("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
         method: "POST",
         headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "google/gemini-2.5-flash",
+          model: "gemini-2.5-flash",
           messages,
           tools: TOOLS,
         }),
       });
 
       if (resp.status === 429) throw new Error("Rate limit exceeded. Please try again shortly.");
-      if (resp.status === 402) throw new Error("AI credits exhausted. Add credits in Settings → Workspace → Usage.");
-      if (!resp.ok) throw new Error(`AI gateway error: ${resp.status}`);
+      if (!resp.ok) throw new Error(`Gemini API error: ${resp.status}`);
 
       const body = await resp.json();
       const choice = body.choices?.[0]?.message;
