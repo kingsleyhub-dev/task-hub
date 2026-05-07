@@ -78,10 +78,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "description", content: "Kingsley Hub CyberTaskOps — secure cybersecurity work assignment & operations platform." },
       { name: "author", content: "Kingsley Hub" },
       { property: "og:title", content: "CyberTaskOps — Kingsley Hub" },
-      { property: "og:description", content: "Premium cybersecurity operations & task management platform." },
+      { property: "og:description", content: "Kingsley Hub CyberTaskOps — secure cybersecurity work assignment & operations platform." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "CyberTaskOps — Kingsley Hub" },
+      { name: "twitter:description", content: "Kingsley Hub CyberTaskOps — secure cybersecurity work assignment & operations platform." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/g7qifwfY3ZZHE2dlrks8JtTabR73/social-images/social-1778189544512-Designer.webp" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/g7qifwfY3ZZHE2dlrks8JtTabR73/social-images/social-1778189544512-Designer.webp" },
     ],
     links: [
       {
