@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
+import { AgentWidget } from "./AgentWidget";
 
 const nav = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -113,6 +114,7 @@ export function AppShell() {
           <span className="font-mono text-cyber-cyan/70">v1.0 · build 0507</span>
         </footer>
       </div>
+      <AgentWidget />
     </div>
   );
 }
