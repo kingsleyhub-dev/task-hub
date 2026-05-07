@@ -114,6 +114,11 @@ export function AppShell() {
           <span className="font-mono text-cyber-cyan/70">v1.0 · build 0507</span>
         </footer>
       </div>
+      <AgentWidget />
+    </div>
+  );
+}
+      </div>
     </div>
   );
 }
