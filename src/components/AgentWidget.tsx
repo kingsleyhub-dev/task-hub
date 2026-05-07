@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { chatWithAgent } from "@/lib/agent.functions";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
 
@@ -32,7 +33,10 @@ export function AgentWidget() {
     setInput("");
     setBusy(true);
     try {
-      const res: any = await chat({ data: { messages: next } });
+      const { data: sess } = await supabase.auth.getSession();
+      const token = sess.session?.access_token;
+      if (!token) throw new Error("Please sign in to use the assistant.");
+      const res: any = await chat({ data: { messages: next, token } });
       setMessages([...next, { role: "assistant", content: res.reply || "(no response)" }]);
       for (const a of res.actions ?? []) {
         if (a.type === "navigate" && typeof a.to === "string") {

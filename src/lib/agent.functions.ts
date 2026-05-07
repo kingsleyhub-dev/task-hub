@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { createClient } from "@supabase/supabase-js";
+import type { Database } from "@/integrations/supabase/types";
 
 type Msg = { role: "system" | "user" | "assistant" | "tool"; content: string; tool_call_id?: string; tool_calls?: any };
 
@@ -84,17 +85,27 @@ async function runQuery(supabase: any, userId: string, resource: string, limit =
 }
 
 export const chatWithAgent = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((data: { messages: Msg[] }) => data)
-  .handler(async ({ data, context }) => {
+  .inputValidator((data: { messages: Msg[]; token: string }) => data)
+  .handler(async ({ data }) => {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) throw new Error("GEMINI_API_KEY is not configured");
+
+    const SUPABASE_URL = process.env.SUPABASE_URL!;
+    const SUPABASE_PUBLISHABLE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY!;
+    if (!data.token) throw new Error("Unauthorized: missing session token");
+
+    const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+      global: { headers: { Authorization: `Bearer ${data.token}` } },
+      auth: { persistSession: false, autoRefreshToken: false, storage: undefined },
+    });
+    const { data: claims, error: claimsErr } = await supabase.auth.getClaims(data.token);
+    if (claimsErr || !claims?.claims?.sub) throw new Error("Unauthorized: invalid session");
+    const userId = claims.claims.sub as string;
 
     const messages: Msg[] = [{ role: "system", content: SYSTEM }, ...data.messages];
 
     const actions: { type: "navigate"; to: string; reason?: string }[] = [];
 
-    // up to 3 tool round-trips
     for (let i = 0; i < 4; i++) {
       const resp = await fetch("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
         method: "POST",
@@ -107,7 +118,10 @@ export const chatWithAgent = createServerFn({ method: "POST" })
       });
 
       if (resp.status === 429) throw new Error("Rate limit exceeded. Please try again shortly.");
-      if (!resp.ok) throw new Error(`Gemini API error: ${resp.status}`);
+      if (!resp.ok) {
+        const errText = await resp.text().catch(() => "");
+        throw new Error(`Gemini API error ${resp.status}: ${errText.slice(0, 200)}`);
+      }
 
       const body = await resp.json();
       const choice = body.choices?.[0]?.message;
@@ -129,7 +143,7 @@ export const chatWithAgent = createServerFn({ method: "POST" })
           actions.push({ type: "navigate", to: args.to, reason: args.reason });
           result = { ok: true, navigated_to: args.to };
         } else if (name === "query_platform") {
-          result = await runQuery(context.supabase, context.userId, args.resource, args.limit);
+          result = await runQuery(supabase, userId, args.resource, args.limit);
         } else {
           result = { error: "unknown tool" };
         }
