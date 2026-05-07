@@ -87,8 +87,8 @@ export const chatWithAgent = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: { messages: Msg[] }) => data)
   .handler(async ({ data, context }) => {
-    const apiKey = process.env.LOVABLE_API_KEY;
-    if (!apiKey) throw new Error("LOVABLE_API_KEY is not configured");
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) throw new Error("GEMINI_API_KEY is not configured");
 
     const messages: Msg[] = [{ role: "system", content: SYSTEM }, ...data.messages];
 
