@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AIProviderSettings } from "@/components/AIProviderSettings";
 
 export const Route = createFileRoute("/_app/settings")({ component: SettingsPage });
 
@@ -18,9 +19,14 @@ function SettingsPage() {
           <TabsTrigger value="org">Organization</TabsTrigger>
           <TabsTrigger value="roles">Roles & Permissions</TabsTrigger>
           <TabsTrigger value="security">Security</TabsTrigger>
+          <TabsTrigger value="ai">AI Provider</TabsTrigger>
           <TabsTrigger value="workid">Work ID</TabsTrigger>
           <TabsTrigger value="notif">Notifications</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="ai">
+          <AIProviderSettings />
+        </TabsContent>
 
         <TabsContent value="org">
           <Card className="glass p-6 space-y-4 max-w-2xl">
