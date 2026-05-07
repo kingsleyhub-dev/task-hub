@@ -96,11 +96,11 @@ export const chatWithAgent = createServerFn({ method: "POST" })
 
     // up to 3 tool round-trips
     for (let i = 0; i < 4; i++) {
-      const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      const resp = await fetch("https://generativelanguage.openai.azure-api.net/v1/chat/completions".replace("https://generativelanguage.openai.azure-api.net", "https://generativelanguage.googleapis.com/v1beta/openai"), {
         method: "POST",
         headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "google/gemini-2.5-flash",
+          model: "gemini-2.5-flash",
           messages,
           tools: TOOLS,
         }),
