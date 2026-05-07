@@ -91,14 +91,16 @@ export function AppShell() {
             </Link>
             <div className="flex items-center gap-2">
               <div className="size-8 rounded-full bg-gradient-to-br from-cyber-cyan to-cyber-purple flex items-center justify-center text-xs font-bold text-primary-foreground">
-                AO
+                {initials}
               </div>
               <div className="hidden lg:block text-xs leading-tight">
-                <div className="font-semibold">Adaeze Okafor</div>
-                <div className="text-muted-foreground">KH-0001 · Super Admin</div>
+                <div className="font-semibold">{profile?.name ?? "Operator"}</div>
+                <div className="text-muted-foreground">{profile?.work_id ?? "—"} · {roleLabel}</div>
               </div>
             </div>
-            <Link to="/"><Button variant="ghost" size="icon"><LogOut className="size-4" /></Button></Link>
+            <Button variant="ghost" size="icon" onClick={async () => { await signOut(); nav2({ to: "/" }); }}>
+              <LogOut className="size-4" />
+            </Button>
           </div>
         </header>
 
