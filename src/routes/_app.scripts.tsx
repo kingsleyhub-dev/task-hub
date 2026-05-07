@@ -3,22 +3,21 @@ import { PageHeader } from "@/components/PageHeader";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Code2, ShieldAlert, Plus, Eye, Download } from "lucide-react";
-import { scripts } from "@/lib/sample-data";
+import { Code2, ShieldAlert } from "lucide-react";
+import { useScripts } from "@/hooks/useData";
 import { StatusBadge } from "@/components/StatusBadges";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 export const Route = createFileRoute("/_app/scripts")({ component: ScriptsPage });
 
 function ScriptsPage() {
+  const { data, loading } = useScripts();
+
   return (
     <div>
       <PageHeader
         title="Script Repository"
         subtitle="Reviewed and approved scripts for monitoring, hardening, automation and reporting."
-        actions={<Button className="bg-gradient-to-r from-cyber-cyan to-cyber-purple text-primary-foreground">
-          <Plus className="size-4 mr-1.5" /> Upload Script
-        </Button>}
       />
 
       <Alert className="mb-5 border-cyber-purple/40 bg-cyber-purple/10">
@@ -37,36 +36,29 @@ function ScriptsPage() {
               <TableHead>Language</TableHead>
               <TableHead>Category</TableHead>
               <TableHead>Author</TableHead>
-              <TableHead>Env</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead>Updated</TableHead>
-              <TableHead></TableHead>
+              <TableHead>Created</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {scripts.map(s => (
+            {loading && <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">Loading…</TableCell></TableRow>}
+            {!loading && data.length === 0 && <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">No scripts in repository.</TableCell></TableRow>}
+            {data.map(s => (
               <TableRow key={s.id} className="border-border/60 hover:bg-muted/30">
                 <TableCell>
                   <div className="flex items-center gap-2">
                     <Code2 className="size-4 text-cyber-cyan" />
                     <div>
                       <div className="font-mono text-sm">{s.name}</div>
-                      <div className="text-[11px] text-muted-foreground">{s.id} · v{s.version}</div>
+                      <div className="text-[11px] text-muted-foreground">{s.description}</div>
                     </div>
                   </div>
                 </TableCell>
-                <TableCell className="text-sm">{s.lang}</TableCell>
-                <TableCell className="text-sm">{s.category}</TableCell>
-                <TableCell className="text-sm">{s.author}</TableCell>
-                <TableCell><StatusBadge value={s.env} /></TableCell>
-                <TableCell><StatusBadge value={s.status} /></TableCell>
-                <TableCell className="text-xs font-mono text-muted-foreground">{s.updated}</TableCell>
-                <TableCell>
-                  <div className="flex gap-1">
-                    <Button size="icon" variant="ghost"><Eye className="size-4" /></Button>
-                    <Button size="icon" variant="ghost"><Download className="size-4" /></Button>
-                  </div>
-                </TableCell>
+                <TableCell className="text-sm">{s.language ?? "—"}</TableCell>
+                <TableCell className="text-sm">{s.category ?? "—"}</TableCell>
+                <TableCell className="text-sm">{s.author?.name ?? "—"}</TableCell>
+                <TableCell><StatusBadge value={s.approval_status} /></TableCell>
+                <TableCell className="text-xs font-mono text-muted-foreground">{new Date(s.created_at).toLocaleDateString()}</TableCell>
               </TableRow>
             ))}
           </TableBody>
