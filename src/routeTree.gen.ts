@@ -9,38 +9,249 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as RegisterRouteImport } from './routes/register'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppUsersRouteImport } from './routes/_app.users'
+import { Route as AppToolsRouteImport } from './routes/_app.tools'
+import { Route as AppTasksRouteImport } from './routes/_app.tasks'
+import { Route as AppSettingsRouteImport } from './routes/_app.settings'
+import { Route as AppScriptsRouteImport } from './routes/_app.scripts'
+import { Route as AppReportsRouteImport } from './routes/_app.reports'
+import { Route as AppNotificationsRouteImport } from './routes/_app.notifications'
+import { Route as AppInstallationRouteImport } from './routes/_app.installation'
+import { Route as AppDashboardRouteImport } from './routes/_app.dashboard'
+import { Route as AppCehRouteImport } from './routes/_app.ceh'
+import { Route as AppAuditRouteImport } from './routes/_app.audit'
 
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppRoute = AppRouteImport.update({
+  id: '/_app',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppUsersRoute = AppUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppToolsRoute = AppToolsRouteImport.update({
+  id: '/tools',
+  path: '/tools',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppTasksRoute = AppTasksRouteImport.update({
+  id: '/tasks',
+  path: '/tasks',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSettingsRoute = AppSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppScriptsRoute = AppScriptsRouteImport.update({
+  id: '/scripts',
+  path: '/scripts',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppReportsRoute = AppReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppNotificationsRoute = AppNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppInstallationRoute = AppInstallationRouteImport.update({
+  id: '/installation',
+  path: '/installation',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppDashboardRoute = AppDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCehRoute = AppCehRouteImport.update({
+  id: '/ceh',
+  path: '/ceh',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAuditRoute = AppAuditRouteImport.update({
+  id: '/audit',
+  path: '/audit',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/login': typeof LoginRoute
+  '/register': typeof RegisterRoute
+  '/audit': typeof AppAuditRoute
+  '/ceh': typeof AppCehRoute
+  '/dashboard': typeof AppDashboardRoute
+  '/installation': typeof AppInstallationRoute
+  '/notifications': typeof AppNotificationsRoute
+  '/reports': typeof AppReportsRoute
+  '/scripts': typeof AppScriptsRoute
+  '/settings': typeof AppSettingsRoute
+  '/tasks': typeof AppTasksRoute
+  '/tools': typeof AppToolsRoute
+  '/users': typeof AppUsersRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/login': typeof LoginRoute
+  '/register': typeof RegisterRoute
+  '/audit': typeof AppAuditRoute
+  '/ceh': typeof AppCehRoute
+  '/dashboard': typeof AppDashboardRoute
+  '/installation': typeof AppInstallationRoute
+  '/notifications': typeof AppNotificationsRoute
+  '/reports': typeof AppReportsRoute
+  '/scripts': typeof AppScriptsRoute
+  '/settings': typeof AppSettingsRoute
+  '/tasks': typeof AppTasksRoute
+  '/tools': typeof AppToolsRoute
+  '/users': typeof AppUsersRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_app': typeof AppRouteWithChildren
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/login': typeof LoginRoute
+  '/register': typeof RegisterRoute
+  '/_app/audit': typeof AppAuditRoute
+  '/_app/ceh': typeof AppCehRoute
+  '/_app/dashboard': typeof AppDashboardRoute
+  '/_app/installation': typeof AppInstallationRoute
+  '/_app/notifications': typeof AppNotificationsRoute
+  '/_app/reports': typeof AppReportsRoute
+  '/_app/scripts': typeof AppScriptsRoute
+  '/_app/settings': typeof AppSettingsRoute
+  '/_app/tasks': typeof AppTasksRoute
+  '/_app/tools': typeof AppToolsRoute
+  '/_app/users': typeof AppUsersRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/forgot-password'
+    | '/login'
+    | '/register'
+    | '/audit'
+    | '/ceh'
+    | '/dashboard'
+    | '/installation'
+    | '/notifications'
+    | '/reports'
+    | '/scripts'
+    | '/settings'
+    | '/tasks'
+    | '/tools'
+    | '/users'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/forgot-password'
+    | '/login'
+    | '/register'
+    | '/audit'
+    | '/ceh'
+    | '/dashboard'
+    | '/installation'
+    | '/notifications'
+    | '/reports'
+    | '/scripts'
+    | '/settings'
+    | '/tasks'
+    | '/tools'
+    | '/users'
+  id:
+    | '__root__'
+    | '/'
+    | '/_app'
+    | '/forgot-password'
+    | '/login'
+    | '/register'
+    | '/_app/audit'
+    | '/_app/ceh'
+    | '/_app/dashboard'
+    | '/_app/installation'
+    | '/_app/notifications'
+    | '/_app/reports'
+    | '/_app/scripts'
+    | '/_app/settings'
+    | '/_app/tasks'
+    | '/_app/tools'
+    | '/_app/users'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRouteWithChildren
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
+  LoginRoute: typeof LoginRoute
+  RegisterRoute: typeof RegisterRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_app': {
+      id: '/_app'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +259,122 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_app/users': {
+      id: '/_app/users'
+      path: '/users'
+      fullPath: '/users'
+      preLoaderRoute: typeof AppUsersRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/tools': {
+      id: '/_app/tools'
+      path: '/tools'
+      fullPath: '/tools'
+      preLoaderRoute: typeof AppToolsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/tasks': {
+      id: '/_app/tasks'
+      path: '/tasks'
+      fullPath: '/tasks'
+      preLoaderRoute: typeof AppTasksRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/settings': {
+      id: '/_app/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AppSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/scripts': {
+      id: '/_app/scripts'
+      path: '/scripts'
+      fullPath: '/scripts'
+      preLoaderRoute: typeof AppScriptsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/reports': {
+      id: '/_app/reports'
+      path: '/reports'
+      fullPath: '/reports'
+      preLoaderRoute: typeof AppReportsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/notifications': {
+      id: '/_app/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof AppNotificationsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/installation': {
+      id: '/_app/installation'
+      path: '/installation'
+      fullPath: '/installation'
+      preLoaderRoute: typeof AppInstallationRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/dashboard': {
+      id: '/_app/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AppDashboardRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/ceh': {
+      id: '/_app/ceh'
+      path: '/ceh'
+      fullPath: '/ceh'
+      preLoaderRoute: typeof AppCehRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/audit': {
+      id: '/_app/audit'
+      path: '/audit'
+      fullPath: '/audit'
+      preLoaderRoute: typeof AppAuditRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
+interface AppRouteChildren {
+  AppAuditRoute: typeof AppAuditRoute
+  AppCehRoute: typeof AppCehRoute
+  AppDashboardRoute: typeof AppDashboardRoute
+  AppInstallationRoute: typeof AppInstallationRoute
+  AppNotificationsRoute: typeof AppNotificationsRoute
+  AppReportsRoute: typeof AppReportsRoute
+  AppScriptsRoute: typeof AppScriptsRoute
+  AppSettingsRoute: typeof AppSettingsRoute
+  AppTasksRoute: typeof AppTasksRoute
+  AppToolsRoute: typeof AppToolsRoute
+  AppUsersRoute: typeof AppUsersRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppAuditRoute: AppAuditRoute,
+  AppCehRoute: AppCehRoute,
+  AppDashboardRoute: AppDashboardRoute,
+  AppInstallationRoute: AppInstallationRoute,
+  AppNotificationsRoute: AppNotificationsRoute,
+  AppReportsRoute: AppReportsRoute,
+  AppScriptsRoute: AppScriptsRoute,
+  AppSettingsRoute: AppSettingsRoute,
+  AppTasksRoute: AppTasksRoute,
+  AppToolsRoute: AppToolsRoute,
+  AppUsersRoute: AppUsersRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRoute: AppRouteWithChildren,
+  ForgotPasswordRoute: ForgotPasswordRoute,
+  LoginRoute: LoginRoute,
+  RegisterRoute: RegisterRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
