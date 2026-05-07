@@ -3,14 +3,30 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Logo } from "@/components/Logo";
-import { Shield, KeyRound } from "lucide-react";
-import { FormEvent } from "react";
+import { Shield, KeyRound, Loader2 } from "lucide-react";
+import { FormEvent, useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/login")({ component: Login });
 
 function Login() {
   const nav = useNavigate();
-  function submit(e: FormEvent) { e.preventDefault(); nav({ to: "/dashboard" }); }
+  const { signIn, signInWithGoogle } = useAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function submit(e: FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    const { error } = await signIn(email, password);
+    setLoading(false);
+    if (error) { toast.error(error); return; }
+    toast.success("Welcome back, operator");
+    nav({ to: "/dashboard" });
+  }
+
   return (
     <div className="min-h-screen grid lg:grid-cols-2">
       <div className="hidden lg:flex flex-col justify-between p-10 relative overflow-hidden border-r border-border">
@@ -37,16 +53,20 @@ function Login() {
           <form onSubmit={submit} className="mt-6 space-y-4">
             <div>
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" placeholder="you@kingsleyhub.io" defaultValue="adaeze@kingsleyhub.io" className="mt-1.5" />
+              <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@kingsleyhub.io" className="mt-1.5" />
             </div>
             <div>
               <div className="flex justify-between"><Label htmlFor="pw">Password</Label>
                 <Link to="/forgot-password" className="text-xs text-cyber-cyan hover:underline">Forgot?</Link>
               </div>
-              <Input id="pw" type="password" defaultValue="••••••••" className="mt-1.5" />
+              <Input id="pw" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="mt-1.5" />
             </div>
-            <Button type="submit" className="w-full bg-gradient-to-r from-cyber-cyan to-cyber-purple text-primary-foreground shadow-glow">
-              <KeyRound className="size-4 mr-2" /> Sign In Securely
+            <Button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-cyber-cyan to-cyber-purple text-primary-foreground shadow-glow">
+              {loading ? <Loader2 className="size-4 mr-2 animate-spin" /> : <KeyRound className="size-4 mr-2" />}
+              Sign In Securely
+            </Button>
+            <Button type="button" variant="outline" className="w-full" onClick={() => signInWithGoogle()}>
+              Continue with Google
             </Button>
             <p className="text-xs text-muted-foreground text-center">
               No account? <Link to="/register" className="text-cyber-cyan hover:underline">Request access</Link>
