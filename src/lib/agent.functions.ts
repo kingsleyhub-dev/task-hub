@@ -96,7 +96,7 @@ export const chatWithAgent = createServerFn({ method: "POST" })
 
     // up to 3 tool round-trips
     for (let i = 0; i < 4; i++) {
-      const resp = await fetch("https://generativelanguage.openai.azure-api.net/v1/chat/completions".replace("https://generativelanguage.openai.azure-api.net", "https://generativelanguage.googleapis.com/v1beta/openai"), {
+      const resp = await fetch("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
         method: "POST",
         headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
         body: JSON.stringify({
