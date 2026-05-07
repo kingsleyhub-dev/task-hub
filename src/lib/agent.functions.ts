@@ -87,11 +87,9 @@ async function runQuery(supabase: any, userId: string, resource: string, limit =
 export const chatWithAgent = createServerFn({ method: "POST" })
   .inputValidator((data: { messages: Msg[]; token: string }) => data)
   .handler(async ({ data }) => {
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) throw new Error("GEMINI_API_KEY is not configured");
-
     const SUPABASE_URL = process.env.SUPABASE_URL!;
     const SUPABASE_PUBLISHABLE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY!;
+    const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
     if (!data.token) throw new Error("Unauthorized: missing session token");
 
     const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
@@ -101,6 +99,17 @@ export const chatWithAgent = createServerFn({ method: "POST" })
     const { data: claims, error: claimsErr } = await supabase.auth.getClaims(data.token);
     if (claimsErr || !claims?.claims?.sub) throw new Error("Unauthorized: invalid session");
     const userId = claims.claims.sub as string;
+
+    // Resolve Gemini key: prefer DB-stored key (admin-managed), fall back to env
+    let apiKey = process.env.GEMINI_API_KEY ?? "";
+    try {
+      const admin = createClient<Database>(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
+        auth: { persistSession: false, autoRefreshToken: false, storage: undefined },
+      });
+      const { data: row } = await admin.from("app_secrets").select("value").eq("key", "GEMINI_API_KEY").maybeSingle();
+      if (row?.value) apiKey = row.value;
+    } catch {}
+    if (!apiKey) throw new Error("Gemini API key is not configured. Ask an admin to set it in Settings → AI Provider.");
 
     const messages: Msg[] = [{ role: "system", content: SYSTEM }, ...data.messages];
 
