@@ -107,8 +107,7 @@ export const chatWithAgent = createServerFn({ method: "POST" })
       });
 
       if (resp.status === 429) throw new Error("Rate limit exceeded. Please try again shortly.");
-      if (resp.status === 402) throw new Error("AI credits exhausted. Add credits in Settings → Workspace → Usage.");
-      if (!resp.ok) throw new Error(`AI gateway error: ${resp.status}`);
+      if (!resp.ok) throw new Error(`Gemini API error: ${resp.status}`);
 
       const body = await resp.json();
       const choice = body.choices?.[0]?.message;
